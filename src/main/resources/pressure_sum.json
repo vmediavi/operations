@@ -1,0 +1,5 @@
+{
+  "name": "Pressure Sum",
+  "configJson": "{\"operation\": \"sum\", \"inputs\": [{\"sensorId\": \"p1\"}, {\"sensorId\": \"p2\"}]}",
+  "active": true
+}

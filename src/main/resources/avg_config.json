@@ -1,0 +1,13 @@
+{
+  "operation": "average",
+  "inputs": [
+    {
+      "operation": "sum",
+      "inputs": [
+        { "sensorId": "pressure1" },
+        { "sensorId": "pressure2" }
+      ]
+    },
+    { "sensorId": "pressure3" }
+  ]
+}

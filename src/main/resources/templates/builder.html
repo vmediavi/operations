@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Math Expression Builder</title>
+    <style>
+        body {
+          display: flex;
+          font-family: sans-serif;
+          gap: 20px;
+        }
+        .toolbox {
+          width: 200px;
+          background: #eef;
+          padding: 10px;
+          border: 1px solid #999;
+        }
+        .toolbox div {
+          padding: 10px;
+          background: #cce;
+          margin: 5px;
+          text-align: center;
+          cursor: grab;
+          border: 1px solid #999;
+        }
+        #canvas {
+          flex: 1;
+          border: 2px dashed #999;
+          min-height: 400px;
+          padding: 10px;
+        }
+        .node {
+          padding: 10px;
+          border: 2px solid black;
+          margin: 5px;
+          background: #fff;
+          display: inline-block;
+        }
+        .op {
+          background: #ffd;
+        }
+        .dropzone {
+          display: inline-block;
+          padding: 5px;
+          border: 1px dashed #ccc;
+          min-width: 50px;
+          margin: 0 5px;
+        }
+        pre {
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          background: #eee;
+          padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="toolbox">
+    <div draggable="true" data-type="operator" data-op="+">+</div>
+    <div draggable="true" data-type="operator" data-op="-">-</div>
+    <div draggable="true" data-type="operator" data-op="*">*</div>
+    <div draggable="true" data-type="operator" data-op="/">/</div>
+    <div draggable="true" data-type="sensor" data-id="sensorA">sensorA</div>
+    <div draggable="true" data-type="sensor" data-id="sensorB">sensorB</div>
+    <div draggable="true" data-type="sensor" data-id="sensorC">sensorC</div>
+</div>
+
+<div>
+    <div id="canvas">Drop elements here</div>
+    <h3>Generated JSON</h3>
+    <pre id="jsonOutput">// Start dragging</pre>
+</div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+
+    document.querySelectorAll('.toolbox div').forEach(el => {
+      el.addEventListener('dragstart', e => {
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+          type: el.dataset.type,
+          value: el.dataset.op || el.dataset.id
+        }));
+      });
+    });
+
+    function createSensorNode(id) {
+      const div = document.createElement('div');
+      div.className = 'node';
+      div.textContent = id;
+      div.dataset.type = 'sensorId';
+      div.dataset.id = id;
+      return div;
+    }
+
+    function createOperatorNode(op) {
+      const div = document.createElement('div');
+      div.className = 'node op';
+      div.dataset.type = 'operation';
+      div.dataset.op = op;
+      div.innerHTML = `
+        (<span class="dropzone"></span> <strong>${op}</strong> <span class="dropzone"></span>)
+      `;
+      div.querySelectorAll('.dropzone').forEach(addDropHandlers);
+      return div;
+    }
+
+    function addDropHandlers(zone) {
+      zone.addEventListener('dragover', e => e.preventDefault());
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+        const node = data.type === 'sensor'
+          ? createSensorNode(data.value)
+          : createOperatorNode(data.value);
+        zone.innerHTML = ''; // Clear and insert
+        zone.appendChild(node);
+        updateJson();
+      });
+    }
+
+    canvas.addEventListener('dragover', e => e.preventDefault());
+    canvas.addEventListener('drop', e => {
+      e.preventDefault();
+      if (canvas.children.length > 0) return alert("Only one root allowed");
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      const node = data.type === 'sensor'
+        ? createSensorNode(data.value)
+        : createOperatorNode(data.value);
+      canvas.appendChild(node);
+      updateJson();
+    });
+
+    function buildTree(el) {
+      if (el.dataset.type === 'sensorId') {
+        return { sensorId: el.dataset.id };
+      }
+      if (el.dataset.type === 'operation') {
+        const zones = el.querySelectorAll('.dropzone');
+        return {
+          operation: el.dataset.op,
+          inputs: Array.from(zones).map(z => buildTree(z.firstElementChild)).filter(Boolean)
+        };
+      }
+      return null;
+    }
+
+    function updateJson() {
+      const root = canvas.firstElementChild;
+      if (!root) return;
+      const tree = buildTree(root);
+      document.getElementById('jsonOutput').textContent = JSON.stringify(tree, null, 2);
+    }
+</script>
+</body>
+</html>

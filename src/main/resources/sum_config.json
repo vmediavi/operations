@@ -1,0 +1,7 @@
+{
+  "operation": "sum",
+  "inputs": [
+    { "sensorId": "temperature" },
+    { "sensorId": "humidity" }
+  ]
+}

@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  gap: 2rem;
+}
+
+.palette {
+  width: 200px;
+  background: #f8f9fa;
+  padding: 1rem;
+  border: 1px solid #ccc;
+}
+
+.draggable {
+  background-color: #e0e0ff;
+  border: 1px dashed #666;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  cursor: move;
+  text-align: center;
+}
+
+.droppable-area {
+  min-height: 100px;
+  background-color: #f0f0f0;
+  border: 2px dashed #aaa;
+  padding: 10px;
+  margin-top: 1rem;
+}
+
+.operation-node {
+  margin: 10px;
+  padding: 10px;
+  border: 2px solid #444;
+  background-color: #fff;
+}
+
+.operation-node > .inputs {
+  margin-top: 10px;
+  padding-left: 20px;
+  border-left: 2px dotted #ccc;
+}
+
+.sensor-input {
+  width: 100px;
+}

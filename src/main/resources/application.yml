@@ -1,0 +1,17 @@
+spring.application.name: operations
+
+server:
+  port: 8081
+
+# PostgreSQL database configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/operation
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  # JPA configurations
+# JPA configurations
+spring.jpa.hibernate.ddl-auto: update
+spring.jpa.show-sql: true
