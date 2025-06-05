@@ -1,0 +1,25 @@
+<!-- templates/list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Saved Operations</title>
+</head>
+<body>
+<h2>Operations</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Expression</th>
+        <th>Active</th>
+        <th>Created</th>
+    </tr>
+    <tr th:each="op : ${operations}">
+        <td th:text="${op.name}"></td>
+        <td th:text="${op.expression}"></td>
+        <td th:text="${op.active}"></td>
+        <td th:text="${op.createdAt}"></td>
+    </tr>
+</table>
+</body>
+</html>

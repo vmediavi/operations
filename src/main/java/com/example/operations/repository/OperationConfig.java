@@ -13,7 +13,7 @@ public class OperationConfig {
     private String name;
 
     @Column(columnDefinition = "TEXT")
-    private String configJson;
+    private String expression;
 
     private boolean active;
 
@@ -36,12 +36,12 @@ public class OperationConfig {
         return this;
     }
 
-    public String getConfigJson() {
-        return configJson;
+    public String getExpression() {
+        return expression;
     }
 
-    public OperationConfig setConfigJson(String configJson) {
-        this.configJson = configJson;
+    public OperationConfig setExpression(String expression) {
+        this.expression = expression;
         return this;
     }
 

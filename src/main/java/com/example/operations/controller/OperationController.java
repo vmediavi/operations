@@ -1,38 +1,26 @@
 package com.example.operations.controller;
 
-import com.example.operations.repository.OperationConfig;
 import com.example.operations.repository.OperationConfigRepository;
-import com.example.operations.domain.OperationNode;
-import com.example.operations.domain.OperationParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.operations.service.ExpressionService;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController()
 public class OperationController {
     private final OperationConfigRepository repo;
+    private final ExpressionService evaluator;
 
-    public OperationController(OperationConfigRepository repo) {
+    public OperationController(OperationConfigRepository repo, ExpressionService evaluator) {
         this.repo = repo;
+        this.evaluator = evaluator;
     }
 
-    @PostMapping("/evaluate/{configId}")
-    public ResponseEntity<Double> evaluate(
-            @PathVariable Long configId,
-            @RequestBody Map<String, Double> iotData) throws Exception {
-
-        var config = repo.findById(configId).orElseThrow();
-        JsonNode tree = new ObjectMapper().readTree(config.getConfigJson());
-        OperationNode node = OperationParser.parse(tree);
-        double result = node.evaluate(iotData);
-        return ResponseEntity.ok(result);
+    @PostMapping("/evaluate/{id}")
+    @ResponseBody
+    public double evaluate(@PathVariable Long id, @RequestBody Map<String, Double> variables) {
+        var op = repo.findById(id).orElseThrow();
+        return evaluator.evaluate(op.getExpression(), variables);
     }
 }
